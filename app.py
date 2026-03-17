@@ -5,7 +5,7 @@ from streamlit_drawable_canvas import st_canvas
 # --- 1. הגדרות דף ---
 st.set_page_config(page_title="בקרה קונסטרוקטיבית", layout="wide", initial_sidebar_state="collapsed")
 
-# --- 2. CSS מעודכן (מרכוז התפריט ועיצוב כפתור חזרה) ---
+# --- 2. CSS מעודכן (מרכוז חזק ותיקוני עיצוב) ---
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Heebo:wght@400;700;800&display=swap');
@@ -31,44 +31,46 @@ st.markdown("""
         background-color: #E2E8F0; padding: 12px; border-radius: 8px;
         margin-bottom: 20px; font-size: 0.95rem; color: #1A202C;
         border-right: 5px solid #1A4789; box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        text-align: right;
     }
 
-    /* מרכוז התפריט הראשי */
-    .centered-menu {
+    /* מרכוז תפריט הכפתורים */
+    .stButton {
         display: flex;
-        flex-direction: column;
-        align-items: center;
         justify-content: center;
-        text-align: center;
     }
 
-    .inspection-row {
-        background-color: white; padding: 15px; border-radius: 12px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 15px; border: 1px solid #EAEAEA;
-    }
-    
-    .section-title { color: #1A4789; font-weight: 800; font-size: 1.2rem; margin-bottom: 15px; border-bottom: 2px solid #E2E8F0; padding-bottom: 5px; text-align: center; }
-
-    /* עיצוב כפתורי האלמנטים */
     div.stButton > button {
         background-color: white; color: #1A4789; border-radius: 16px; padding: 15px;
-        font-weight: 700; border-right: 6px solid #1A4789; margin-bottom: 12px; width: 100%;
-        text-align: right; transition: 0.3s;
+        font-weight: 700; border-right: 6px solid #1A4789; margin-bottom: 12px; 
+        width: 100%; max-width: 400px; /* מגביל רוחב כדי שייראה טוב במרכז */
+        text-align: center; transition: 0.3s;
+        margin-left: auto; margin-right: auto;
     }
-    
-    /* כפתור חזרה - עיצוב שונה וקטן יותר */
+
+    .section-title { 
+        color: #1A4789; font-weight: 800; font-size: 1.2rem; 
+        margin-bottom: 20px; text-align: center; width: 100%;
+    }
+
     .back-btn button {
         background-color: transparent !important;
         color: #718096 !important;
         border: 1px solid #CBD5E0 !important;
         border-right: 1px solid #CBD5E0 !important;
         font-size: 0.85rem !important;
-        padding: 8px !important;
+        padding: 8px 20px !important;
         margin-top: 20px !important;
+        width: auto !important;
+        max-width: 200px !important;
+    }
+
+    .inspection-row {
+        background-color: white; padding: 15px; border-radius: 12px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 15px; border: 1px solid #EAEAEA;
     }
 
     .stButton button[kind="primary"] { background-color: #1A4789 !important; color: white !important; }
-    
     label { color: #4A5568 !important; font-weight: 600 !important; }
     </style>
     """, unsafe_allow_html=True)
@@ -100,7 +102,7 @@ if st.session_state.screen == 'project_info':
         st.session_state.project_details['contractor'] = st.text_input("קבלן מבצע", value=st.session_state.project_details['contractor'])
         st.session_state.project_details['inspector'] = st.text_input("שם המפקח", value=st.session_state.project_details['inspector'])
         st.session_state.project_details['date'] = st.date_input("תאריך", value=st.session_state.project_details['date'])
-        st.markdown("</div>", unsafe_allow_html=True)
+        
         if st.button("המשך לבחירת סוג בקרה ←", type="primary"):
             if st.session_state.project_details['name'] and st.session_state.project_details['contractor']: go_to('main')
             else: st.error("יש למלא שם פרויקט וקבלן")
@@ -109,20 +111,17 @@ elif st.session_state.screen == 'main':
     st.markdown('<div class="top-header"><h1>תפריט בקרה</h1></div>', unsafe_allow_html=True)
     show_header_info()
     
-    # שימוש בעמודות למרכוז התפריט
-    _, center_col, _ = st.columns([1, 4, 1])
+    st.markdown("<div class='section-title'>בחר אלמנט לבדיקה</div>", unsafe_allow_html=True)
     
-    with center_col:
-        st.markdown("<div class='section-title'>בחר אלמנט לבדיקה</div>", unsafe_allow_html=True)
-        if st.button("🏢 מבנה בטון"): go_to('elements')
-        if st.button("🔩 מבנה פלדה"): go_to('elements')
-        if st.button("🌉 גשרים"): go_to('elements')
-        if st.button("🚇 מנהור"): go_to('elements')
-        
-        # כפתור חזרה בעיצוב שונה
-        st.markdown('<div class="back-btn">', unsafe_allow_html=True)
-        if st.button("↩️ שנה פרטי פרויקט"): go_to('project_info')
-        st.markdown('</div>', unsafe_allow_html=True)
+    # הצגת הכפתורים אחד מתחת לשני, מיושרים למרכז דרך ה-CSS
+    st.button("🏢 מבנה בטון", on_click=lambda: go_to('elements'))
+    st.button("🔩 מבנה פלדה", on_click=lambda: go_to('elements'))
+    st.button("🌉 גשרים", on_click=lambda: go_to('elements'))
+    st.button("🚇 מנהור", on_click=lambda: go_to('elements'))
+    
+    st.markdown('<div class="back-btn">', unsafe_allow_html=True)
+    if st.button("↩️ שנה פרטי פרויקט"): go_to('project_info')
+    st.markdown('</div>', unsafe_allow_html=True)
 
 elif st.session_state.screen == 'elements':
     st.markdown('<div class="top-header"><h1>בדיקות שטח</h1></div>', unsafe_allow_html=True)
