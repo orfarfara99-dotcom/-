@@ -94,9 +94,8 @@ def show_header_info():
 # --- 4. מסכי האפליקציה ---
 
 if st.session_state.screen == 'project_info':
-    st.markdown('<div class="top-header"><h1>התחברות</h1><p>הזנת פרטי יומן</p></div>', unsafe_allow_html=True)
+    st.markdown('<div class="top-header"><h1>התחברות</h1><p>פרטי בקרה</p></div>', unsafe_allow_html=True)
     with st.container():
-        st.markdown("<div class='inspection-row'><div class='section-title'>פרטי התקשרות</div>", unsafe_allow_html=True)
         st.session_state.project_details['name'] = st.text_input("שם הפרויקט", value=st.session_state.project_details['name'])
         st.session_state.project_details['contractor'] = st.text_input("קבלן מבצע", value=st.session_state.project_details['contractor'])
         st.session_state.project_details['inspector'] = st.text_input("שם המפקח", value=st.session_state.project_details['inspector'])
